@@ -13,7 +13,7 @@
 		if ($type == "member_info") {
 			$query .= "DELETE FROM members_called WHERE id = '$id' AND cDate = '$date' LIMIT 1;";
 		}
-		else {
+		else if ($type == "guest_info"){
 			$query .= "DELETE FROM guests_called WHERE id = '$id' AND cDate = '$date' LIMIT 1;";
 		}
 	}
@@ -21,7 +21,7 @@
 		if ($type == "member_info") {
 			$query .= "INSERT INTO members_called(id, cDate, called) VALUES ('$id','$date', '$phoned') ON DUPLICATE KEY UPDATE called='$phoned';";
 		}
-		else {
+		else if ($type == "guest_info") {
 			$query .= "INSERT INTO guests_called(id, cDate, called) VALUES ('$id','$date', '$phoned') ON DUPLICATE KEY UPDATE called='$phoned';";
 		}
 	}

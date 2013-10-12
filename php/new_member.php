@@ -1,6 +1,7 @@
 <?php
 
 	include 'connection.php';
+	include 'phone_conv.php';
 	
 	$data_array = $_POST['data'];
 	$data_array = json_decode($data_array);
@@ -76,9 +77,14 @@
 	
 		$LName = ucfirst($LName);
 		$FName = ucfirst($FName);
+		$Phone1 = phone_conv($Phone1);
 		
+		if (!empty($Phone2)) {
+			$Phone2 = phone_conv($Phone2);
+		}
+
 		$member = "
-			<li class='member_info' data-itt-id='$id' data-itt-skill='$Level' title='$FName $LName&#013;Ph: $Phone1&#013;Ph: $Phone2' data-itt-phone='$Phone1'>
+			<li class='member_info' data-itt-id='$id' data-itt-skill='$Level' data-itt-phone_info='$FName $LName ($Level)<br>Ph: $Phone1<br>Ph: $Phone2' data-itt-phone='$Phone1'>
 				<img class='profile_pic' src='images/member_sm.png' alt width='24' height='30'>
 				<div class='name'>$FName $LName</div>
 			</li>";

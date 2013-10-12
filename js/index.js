@@ -307,6 +307,7 @@ $(function() {
 					railVisible: true
 				});
 				set_DND();
+
 				$('.court.locked .members_list').sortable({ disabled: true });
 				$(".court.locked").on({
 					mouseenter: function() {
@@ -443,9 +444,11 @@ $(function() {
 		$('#content .member_info, #content .guest_info').on({
 			mousedown: function() {
 				mouse_down = true;
+				
 			},
 			mousemove: function() {
 				if (mouse_down) {
+					$(".phone_info").hide();
 					scroller = $(this).closest('.slimScrollDiv');
 					scroller.css('position', '');
 					scroller.children('.slimScrollBar').hide();
@@ -464,6 +467,25 @@ $(function() {
 				
 				scroller_court.css('position', 'relative');
 				scroller_court = null;
+			},
+			mouseenter: function() {
+				$this = $(this);
+				$this.attr("hover", "hover");
+
+				timeout = setTimeout(function(){ 
+					if ($this.attr("hover") == "hover") {
+						var offset = $this.offset();
+						var $phone_info = $('.phone_info');
+						$phone_info
+							.html($this.attr("data-itt-phone_info"))
+							.css({"top":offset.top, "left":offset.left, "display":"block"});
+					}
+				}, 1500 );
+			},
+			mouseleave: function() {
+				$('.phone_info').fadeOut("fast");
+				clearTimeout(timeout);
+				$(this).removeAttr("hover");
 			}
 		});	
 	}

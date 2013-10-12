@@ -1,6 +1,7 @@
 <?php
 
 	include 'time_array.php';
+	include 'phone_conv.php';
 	
 	function create_member($row, &$result = NULL) {
 		global $time_array, $date;
@@ -13,8 +14,8 @@
 		$skill = $row["skill"];
 		$lname = ucfirst($row["lname"]);
 		$fname = ucfirst($row["fname"]);
-		$phone1 = $row["phone1"];
-		$phone2 = $row["phone2"];
+		$phone1 = phone_conv($row["phone1"]);
+		$phone2 = phone_conv($row["phone2"]);
 		$rtime = "";
 		$requestStr = "";
 		$friends = "";
@@ -81,11 +82,11 @@
 
 		
 		$data = "
-			<li class='member_info' data-itt-id='$id' data-itt-skill='$skill' title='$fname $lname&#013;Ph: $phone1&#013;Ph: $phone2' data-itt-phone='$phone1'>
+			<li class='member_info' data-itt-id='$id' data-itt-skill='$skill' data-itt-phone_info='$fname $lname ($skill)<br>Ph: $phone1<br>Ph: $phone2' data-itt-phone='$phone1'>
 				<img class='profile_pic' src='$filename' alt width='24' height='30'>
 				<div class='name'>$fname $lname</div>
 				<div class='arrival $arrived' $arrival></div>
-				<div class='phone_status $called' $phone_status'></div>
+				<div class='phone_status $called' $phone_status></div>
 				<div class='ballmach' $ballmach></div>
 				<div class='raquet' $raquet title='$requestStr'></div>
 				<div class='blue_box' $raquet title='$requestStr'>$friends</div>

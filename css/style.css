@@ -16,6 +16,7 @@
 }
 body {
 	font-family: Arial, Helvetica, sans-serif;
+	overflow: hidden;
 }
 .ui-datepicker {
 	width: 100%;	
@@ -206,8 +207,87 @@ body {
 .court.locked .time {
 	background-color: #98491E;
 }
+.phone_info {
+	display: none;
+	position: relative;
+	background: #EEEEEE;
+	border: 1px solid #666666;
+	color: #000;
+	font-size: 14px;
+	font-weight: bold;
+	width: 160px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	margin-left: 10px;
+	padding: 5px 10px 5px 10px;
+	-webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
+	-moz-box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
+	box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
+}
+.phone_info:after, .phone_info:before {
+	bottom: 100%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.phone_info:after {
+	border-color: rgba(238, 238, 238, 0);
+	border-bottom-color: #EEEEEE;
+	border-width: 10px;
+	left: 20%;
+	margin-left: -10px;
+}
+.phone_info:before {
+	border-color: rgba(102, 102, 102, 0);
+	border-bottom-color: #666666;
+	border-width: 11px;
+	left: 20%;
+	margin-left: -11px;
+}
+
+/*
+.phone_info {
+	position: relative;
+	width: 0px;
+	height: 0px;
+	display: none;
+}
+.phone_info span {
+	position: absolute;
+	display: block;
+	padding: 5px 10px 5px 10px;
+	width: 140px;
+	height 22px;
+	white-space: nowrap;
+	background: #EEEEEE;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	border-radius: 2px;
+	color: #000;
+	font-size: 14px;
+	font-weight: bold;
+	left: 20px;
+	z-index: 1;
+	-webkit-box-shadow: 0px 0 3px rgba(0,0,0,1);
+	-moz-box-shadow: 0px 0 3px rgba(0,0,0,1);
+	box-shadow: 0px 0 3px rgba(0,0,0,1); 
+}
+.phone_info span:after {
+  position: absolute;
+  display: block;
+  content: "";
+  border-color: #EEEEEE transparent;
+  border-style: solid;
+  border-width: 0px 10px 10px;
+  top: -10px;
+  left: 10px; 
+}*/
 .member_info {
-	font-size: 0px;
 	background-color: rgba(255,255,255,0.7);
 	height: 32px;
 	width: 200px;

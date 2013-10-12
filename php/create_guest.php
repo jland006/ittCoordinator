@@ -1,12 +1,12 @@
 <?php
-
+	
 	function create_guest($row, $special = NULL) {
 		global $date;
 		$id = $row["id"];
 		$fname = ucfirst($row["fname"]);
 		$lname = ucfirst($row["lname"]);
-		$phone1 = $row["phone1"];
-		$phone2 = $row["phone2"];
+		$phone1 = phone_conv($row["phone1"]);
+		$phone2 = phone_conv($row["phone2"]);
 		$phone_status = "style='display: none;'";
 		$arrival = "style='display: none;'";
 		$arrived = "";
@@ -36,11 +36,11 @@
 		}
 			
 		$data = "
-			<li class='guest_info' data-itt-id='$id' data-itt-skill='' title='$fname $lname&#013;Ph: $phone1' data-itt-phone='$phone1'>
+			<li class='guest_info' data-itt-id='$id' data-itt-skill='' data-itt-phone_info='$fname $lname<br>Ph: $phone1' data-itt-phone='$phone1'>
             	<img class='profile_pic' src='images/guest_sm.png' alt width='24' height='30'>
                 <div class='name'>$fname $lname</div>
 				<div class='arrival $arrived' $arrival></div>
-				<div class='phone_status $called' $phone_status'></div>
+				<div class='phone_status $called' $phone_status></div>
             </li>";
 		return $data;
 	}
