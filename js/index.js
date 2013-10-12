@@ -50,7 +50,11 @@ $(function() {
 	
 
 	
-	$("#content").on("dblclick", ".member_info", function() {
+	$("#content").on("dblclick", ".member_info", function(e) {
+		var $target = $(e.target);
+		if($target.hasClass("phone_status") || $target.hasClass("arrival"))
+			return false;
+			
 		var id = $(this).attr("data-itt-id");
 		$.ajax({
 			beforeSend: function(){
@@ -105,6 +109,7 @@ $(function() {
 				
 				$("#deactivate").on("click", function(){
 					var id = $("#main #profile_layout #player_id").val();
+					$('[data-itt-id="' + id +'"]').remove();
 					$.post("php/deactivate.php", {id:id} );
 				});
 				
@@ -226,7 +231,9 @@ $(function() {
 	});	
 		
 	$('#court_layout').sortable({
-		containment: 'parent'
+		containment: 'parent',
+		start: handleDragCourt,
+		update: handleDropCourt
 	}).disableSelection();
 	
 	$('#court_outline').on("dblclick", function(e) {
@@ -281,6 +288,8 @@ $(function() {
 				$("#content .waiting_list").html(output["waiting_list"]);
 				$("#content .all_members").html(output["all_members"]);
 				$("#content .all_guests").html(output["all_guests"]);
+				
+				$("#content #court_layout").append("You can now transfer courts again. You can place a check in each members green checkbox as soon as the member shows up for their match. Click the phone icon once to signify that you have called the member. Click the phone icon again to signify the the member has accepted the match. I will remove this message in a couple days. Please call or text me for any new issues: 760-397-7225. Thank you");
 			},
 			complete: function(){
 				$('#content #court_layout, #content .waiting_list, #content .all_members, #content .all_guests').slimscroll({
@@ -308,6 +317,37 @@ $(function() {
 					var cnum = $(this).closest(".court").attr("data-itt-cid");
 					var time = $("option:selected", this).attr("data-itt-time");
 					$.post('php/court_time.php', {date: currentDate, cnum:cnum, time: time});
+				});
+				$(".member_info .phone_status, .guest_info .phone_status").on("click", function() {
+					$player_info = $(this).closest('li');
+					var type = $player_info.attr("class")
+					var id = $player_info.attr("data-itt-id");
+					
+					if ($(this).hasClass('accepted')) {
+						$(this).attr("class","phone_status uncalled");
+						$.post("php/phone_status.php", {date: currentDate, id: id, type: type, phoned: 2});
+					}
+					else if ($(this).hasClass('called')) {
+						$(this).attr("class","phone_status accepted");
+						$.post("php/phone_status.php", {date: currentDate, id: id, type: type, phoned: 1});
+					}
+					else {
+						$(this).attr("class","phone_status called");
+						$.post("php/phone_status.php", {date: currentDate, id: id, type: type, phoned: 0});
+					}
+				});
+				$(".member_info .arrival, .guest_info .arrival").on("click", function() {
+					$player_info = $(this).closest('li');
+					var type = $player_info.attr("class")
+					var id = $player_info.attr("data-itt-id");
+					if ($(this).hasClass('arrived')) {
+						$(this).attr("class","arrival");
+						$.post("php/arrival.php", {date: currentDate, id: id, type: type, arrived: 0});
+					}
+					else {
+						$(this).attr("class","arrival arrived");
+						$.post("php/arrival.php", {date: currentDate, id: id, type: type, arrived: 1});
+					}
 				});
 				$(".court .ballmach").on("click", function() {
 					var $court = $(this).closest(".court");
@@ -387,25 +427,21 @@ $(function() {
 				if (mouse_down) {
 					scroller = $(this).closest('.slimScrollDiv');
 					scroller.css('position', '');
-					scroller.children('.slimScrollBar').css('width', '0px');
-					scroller.children('.slimScrollRail').css('width', '0px');
+					scroller.children('.slimScrollBar').hide();
+					scroller.children('.slimScrollRail').hide();
 					
 					scroller_court = $('#court_layout').closest('.slimScrollDiv');
 					scroller_court.css('position', '');
-					scroller_court.children('.slimScrollBar').css('width', '0px');
-					scroller_court.children('.slimScrollRail').css('width', '0px');
+					scroller_court.children('.slimScrollBar').hide();
+					scroller_court.children('.slimScrollRail').hide();
 				}
 			},
 			mouseup: function() {
 				mouse_down = false;
 				scroller.css('position', 'relative');
-				scroller.children('.slimScrollBar').css('width', '8px');
-				scroller.children('.slimScrollRail').css('width', '8px');
 				scroller = null;
 				
 				scroller_court.css('position', 'relative');
-				scroller_court.children('.slimScrollBar').css('width', '8px');
-				scroller_court.children('.slimScrollRail').css('width', '8px');
 				scroller_court = null;
 			}
 		});	
@@ -432,25 +468,21 @@ $(function() {
 				if (mouse_down) {
 					scroller = $(this).closest('.slimScrollDiv');
 					scroller.css('position', '');
-					scroller.children('.slimScrollBar').css('width', '0px');
-					scroller.children('.slimScrollRail').css('width', '0px');
+					scroller.children('.slimScrollBar').hide();
+					scroller.children('.slimScrollRail').hide();
 					
 					scroller_court = $('#court_layout').closest('.slimScrollDiv');
 					scroller_court.css('position', '');
-					scroller_court.children('.slimScrollBar').css('width', '0px');
-					scroller_court.children('.slimScrollRail').css('width', '0px');
+					scroller_court.children('.slimScrollBar').hide();
+					scroller_court.children('.slimScrollRail').hide();
 				}
 			},
 			mouseup: function() {
 				mouse_down = false;
 				scroller.css('position', 'relative');
-				scroller.children('.slimScrollBar').css('width', '8px');
-				scroller.children('.slimScrollRail').css('width', '8px');
 				scroller = null;
 				
 				scroller_court.css('position', 'relative');
-				scroller_court.children('.slimScrollBar').css('width', '8px');
-				scroller_court.children('.slimScrollRail').css('width', '8px');
 				scroller_court = null;
 				
 				$("#main .all_guests").sortable("enable");
@@ -462,6 +494,70 @@ $(function() {
 		
 	}
 	
+	function handleDragCourt( event, ui ) {
+		ui.item.data('courts', $(this).sortable('toArray', {attribute: 'data-itt-cid'}));
+	}
+	
+	function handleDropCourt( event, ui ) {
+	
+		$this = $(this);
+		var courts = ui.item.data('courts');
+		var curr_pos = ui.item.index();
+		var cf_num = ui.item.attr("data-itt-cid");
+		var ct_num = courts[curr_pos];
+
+		$court_from = ui.item;
+		$court_to = $('[data-itt-cid="' + ct_num +'"]');
+		
+		var $list_from = $court_from.find(".members_list");
+		var mem_from_sz = $list_from.children('.member_info').size();
+		var guest_from_sz = $list_from.children('.guest_info').size();
+		var time_from = $("option:selected", $court_from.find('.time')).attr("data-itt-time");
+		var locked_from = $court_from.hasClass("locked");
+		var ballmach_from = $court_from.find(".menu .ballmach").hasClass("withBall");
+		
+		
+		var $list_to = $court_to.find(".members_list");
+		var mem_to_sz = $list_to.children('.member_info').size();
+		var guest_to_sz = $list_to.children('.guest_info').size();
+		var time_to = $("option:selected", $court_to.find('.time')).attr("data-itt-time");
+		var locked_to = $court_to.hasClass("locked");
+		var ballmach_to = $court_to.find(".menu .ballmach").hasClass("withBall");
+		
+		
+		$court_from.attr("data-itt-cid", ct_num);
+		$court_from.find('.title span').html("Court #" + ct_num);
+		
+		$court_to.attr("data-itt-cid", cf_num);
+		$court_to.find('.title span').html("Court #" + cf_num);
+		
+		$.each( courts, function( key, value ) {
+			$this.append($('[data-itt-cid="' + value +'"]'));
+		});
+
+
+		
+		var data = new Array();
+		data.push(currentDate);
+		data.push(cf_num);
+		data.push(mem_from_sz);
+		data.push(guest_from_sz);
+		data.push(time_from);
+		data.push(locked_from);
+		data.push(ballmach_from);
+		data.push(ct_num);
+		data.push(mem_to_sz);
+		data.push(guest_to_sz);
+		data.push(time_to);
+		data.push(locked_to);
+		data.push(ballmach_to);
+		
+		data = JSON.stringify(data);
+		
+		$.post('php/transfer.php', {data: data});
+	
+	}
+
 	function handleUpdateList() {}
 
 	function handleMemberDrop(event, ui) {
@@ -556,6 +652,7 @@ $(function() {
 			num = num.substring(7);
 			$.post("php/add_court.php", {date: currentDate, cnum:num}, function(output) {
 				$("#court_layout").append(output);
+				set_DND();
 			});
 		}
 		else if ($target.parent().hasClass('printCourts')) {

@@ -59,7 +59,6 @@
 			<li class='guest_info' data-itt-id='$id' data-itt-skill='' title='$FName $LName&#013;Ph: $Phone1' data-itt-phone='$Phone1'>
             	<img class='profile_pic' src='images/guest_sm.png' alt width='24' height='30'>
                 <div class='name'>$FName $LName</div>
-                <div class='guest_logo'>GUEST</div>
             </li>";
 		echo json_encode(array($success, $guest));
 	}

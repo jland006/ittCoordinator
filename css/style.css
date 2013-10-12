@@ -101,12 +101,13 @@ body {
 }
 .court .menu .ballmach {
 	height: 23px;
-	width: 18px;
-	background-image: url(../images/ballmach_lg.png);
-	opacity: .3;
+	width: 14px;
+	background-image: url(../images/ballmach_blk_lg.png);
+	opacity: 0.7;
 	float: left;
 }
 .court .menu .ballmach.withBall {
+	background-image: url(../images/ballmach_lg.png);
 	opacity: 1;
 }
 .court .menu .level {
@@ -183,13 +184,12 @@ body {
 }
 .member_info .name {
 	font-family: 'lucida grande', tahoma, verdana, arial, sans-serif;
-	font-size: 11px;
+	font-size: 12px;
 	color: #000000;
 	line-height: 32px;
 	position: absolute;
-	left: 36px;
+	left: 32px;
 	top: 0px;
-	text-transform: capitalize;
 }
 .member_info .watch {
 	background-image: url(../images/watch.png);
@@ -205,7 +205,7 @@ body {
 	width: 8px;
 	position: absolute;
 	top: 6px;
-	right: 34px;
+	right: 33px;
 }
 .member_info .blue_box {
 	background-color: #31319f;
@@ -213,7 +213,7 @@ body {
 	width: 9px;
 	position: absolute;
 	top: 2px;
-	right: 30px;
+	right: 29px;
 	-webkit-border-radius: 2px;
 	-moz-border-radius: 2px;
 	border-radius: 2px;
@@ -226,9 +226,37 @@ body {
 .member_info .ballmach {
 	background-image: url(../images/ballmach_sm.png);
 	height: 20px;
+	width: 12px;
+	position: absolute;
+	top: 6px;
+	right: 30px;
+}
+.phone_status {
+	background-image: url(../images/phone1.png);
+	height: 20px;
 	width: 15px;
 	position: absolute;
 	top: 6px;
+	right: 10px;
+}
+.phone_status.uncalled {
+	background-image: url(../images/phone1.png);
+}
+.phone_status.called {
+	background-image: url(../images/phone2.png);
+}
+.phone_status.accepted {
+	background-image: url(../images/phone3.png);
+}
+.arrival.arrived {
+	background-image: url(../images/checked.png);
+}
+.arrival {
+	background-image: url(../images/unchecked.png);
+	height: 15px;
+	width: 15px;
+	position: absolute;
+	top: 8px;
 	right: 10px;
 }
 .guest_info {
@@ -246,13 +274,12 @@ body {
 }
 .guest_info .name {
 	font-family: 'lucida grande', tahoma, verdana, arial, sans-serif;
-	font-size: 11px;
+	font-size: 12px;
 	color: #000000;
 	line-height: 32px;
 	position: absolute;
-	left: 36px;
+	left: 32px;
 	top: 0px;
-	text-transform: capitalize;
 }
 .guest_info .guest_logo {
 	position: absolute;

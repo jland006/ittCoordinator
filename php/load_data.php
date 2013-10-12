@@ -1,33 +1,14 @@
 <?php
 
 	include 'connection.php';
+	include 'create_court.php';
 
-	
 	if (!isset($_POST['date'])) {
 		$date = date("Y-m-d");
 	}
 	else {
 		$date = $_POST['date'];
 	}
-
-	$time_array = array(
-		"00:00:00" => "&#8226;&nbsp; TIME &nbsp;&#8226;",
-		"07:00:00" => "7:00 AM",
-		"07:30:00" => "7:30 AM",
-		"08:00:00" => "8:00 AM",
-		"08:30:00" => "8:30 AM",
-		"09:00:00" => "9:00 AM",
-		"09:30:00" => "9:30 AM",
-		"10:00:00" => "10:00 AM",
-		"10:30:00" => "10:30 AM",
-		"11:00:00" => "11:00 AM",
-		"11:30:00" => "11:30 AM",
-		"12:00:00" => "12:00 PM",
-		"12:30:00" => "12:30 PM",
-		"13:00:00" => "1:00 PM",
-		"13:30:00" => "1:30 PM",
-		"14:00:00" => "2:00 PM"
-	);
 	
 	//////////////////////////////////////////////////////////////////////////////////////
 	$max_num_courts = 13;
@@ -35,7 +16,7 @@
 	$court_layout = "";
 	
 	$queryCourts = "
-	SELECT C.cNum, X.numPlayers, CT.cTime, CL.cNum AS locked, CB.cNum AS ballmach, S.id, S.lname, S.fname, S.gender, S.skill, S.phone1, S.phone2, MRT.rTime, MRB.rDate AS ballrequest, MRFC.friends, MRF.friend as friend, F.fname AS friend_fname, F.lname AS friend_lname FROM (
+	SELECT C.cNum, X.numPlayers, CT.cTime, CL.cNum AS locked, CB.cNum AS ballmach, S.id, S.lname, S.fname, S.gender, S.skill, S.phone1, S.phone2, A.id AS arrived, P.called, MRT.rTime, MRB.rDate AS ballrequest, MRFC.friends, MRF.friend as friend, F.fname AS friend_fname, F.lname AS friend_lname FROM (
 	SELECT cNum FROM court_time WHERE cDate = '$date'
 	UNION
 	SELECT cNum FROM court_ballmach WHERE cDate = '$date'
@@ -61,6 +42,14 @@
 	UNION
 	SELECT GS.id, GS.cDate, GS.cNum, G.lname, G.fname, G.gender, G.skill, G.phone1, G.phone2 FROM guests_schedule GS, guests G WHERE GS.id = G.id) AS S
 	ON S.cNum = C.cNum AND S.cDate = '$date'
+	LEFT JOIN (SELECT id FROM members_arrived WHERE cDate = '$date'
+	UNION
+	SELECT id FROM guests_arrived WHERE cDate = '$date') AS A
+	ON A.id = S.id
+	LEFT JOIN (SELECT * FROM members_called WHERE cDate = '$date'
+	UNION
+	SELECT * FROM guests_called WHERE cDate = '$date') AS P
+	ON P.id = S.id
 	LEFT JOIN members_request_time MRT
 	ON MRT.id = S.id AND MRT.rDate = '$date'
 	LEFT JOIN members_request_ballmach MRB 
@@ -81,37 +70,41 @@
 		$current_court = $row["cNum"];
 		for ($i = 1; $i <= $max_num_courts; $i++) {	
 			if(strcmp($current_court, $i) == 0) {
-				$court_layout.=create_court($row, $resultCourts, $current_court);
+				$court_layout.=create_court($current_court, $row, $resultCourts);
 				$row = $resultCourts->fetch_assoc();
 				$current_court = $row["cNum"];
 			} else {
-				$court_layout.=create_court_empty($i);
+				$court_layout.=create_court($i);
 			}
 		}
-
-		/*while($row = $resultCourts->fetch_assoc()) {
-			$court_layout.=create_court($row, $resultCourts, $current_court);
-		}*/
 		if ($row["cNum"]) {
 			do {
-				$court_layout.=create_court($row, $resultCourts, $current_court);
+				$court_layout.=create_court($current_court, $row, $resultCourts);
 			} while($row = $resultCourts->fetch_assoc());
 		}
 	} else {
 		for ($i = 1; $i <= $max_num_courts; $i++) {
-			$court_layout.=create_court_empty($i);
+			$court_layout.=create_court($i);
 		}		
 	}
 
-	//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
 	
 	$waitingList = "";
 	
 	$queryWaiting = "
-	SELECT R.id, R.lname, R.fname, R.gender, R.skill, R.phone1, R.phone2, MRT.rTime, MRB.rDate AS ballrequest, MRFC.friends, MRF.friend as friend, F.fname AS friend_fname, F.lname AS friend_lname FROM(
+	SELECT R.id, R.lname, R.fname, R.gender, R.skill, R.phone1, R.phone2, A.id AS arrived, P.called, MRT.rTime, MRB.rDate AS ballrequest, MRFC.friends, MRF.friend as friend, F.fname AS friend_fname, F.lname AS friend_lname FROM(
 	SELECT MR.id, MR.rDate, M.lname, M.fname, M.gender, M.skill, M.phone1, M.phone2 FROM members_request MR, members M WHERE MR.id = M.id AND MR.rDate = '$date'
 	UNION
 	SELECT GR.id, GR.rDate, G.lname, G.fname, G.gender, G.skill, G.phone1, G.phone2 FROM guests_request GR, guests G WHERE GR.id = G.id AND GR.rDate = '$date') R
+	LEFT JOIN (SELECT id FROM members_arrived WHERE cDate = '$date'
+	UNION
+	SELECT id FROM guests_arrived WHERE cDate = '$date') AS A
+	ON A.id = R.id
+	LEFT JOIN (SELECT * FROM members_called WHERE cDate = '$date'
+	UNION
+	SELECT * FROM guests_called WHERE cDate = '$date') AS P
+	ON P.id = R.id
 	LEFT JOIN members_request_time MRT 
 	ON MRT.id = R.id  AND MRT.rDate = '$date' 
 	LEFT JOIN members_request_ballmach MRB 
@@ -134,7 +127,7 @@
 			$waitingList .= create_guest($row);
 		}
 		else {
-			$waitingList .= create_member($row, $resultWaiting, true);
+			$waitingList .= create_member($row, $resultWaiting);
 		}
 	}
 	
@@ -169,7 +162,7 @@
 	}
 	
 	while($row = $resultNewMembers->fetch_assoc()) {
-		$allmembersList .= create_member($row, $resultNewMembers, false);
+		$allmembersList .= create_member($row);
 	}
 	
 	
@@ -196,7 +189,7 @@
 	}
 	
 	while($row = $resultRegulars->fetch_assoc()) {
-		$allmembersList .= create_member($row, $resultRegulars, false);
+		$allmembersList .= create_member($row);
 	}
 	
 	
@@ -220,7 +213,7 @@
 	}
 	
 	while($row = $resultNonRegulars->fetch_assoc()) {
-		$allmembersList .= create_member($row, $resultNonRegulars, false);
+		$allmembersList .= create_member($row);
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -251,217 +244,6 @@
 		));
 	exit;
 	
-	function create_court_empty($cnum) {
-		$data = "
-			<li class='court unlocked' data-itt-cid='$cnum'>
-                <div class='title'>
-                    <span>Court #$cnum</span>
-                    <select class='time'> 
-						<option data-itt-time='00:00:00' selected='selected'>&#8226;&nbsp; TIME &nbsp;&#8226;</option>
-                        <option data-itt-time='07:00:00'>7:00 AM</option><option data-itt-time='07:30:00'>7:30 AM</option><option data-itt-time='08:00:00'>8:00 AM</option>
-						<option data-itt-time='08:30:00'>8:30 AM</option><option data-itt-time='09:00:00'>9:00 AM</option><option data-itt-time='09:30:00'>9:30 AM</option>
-						<option data-itt-time='10:00:00'>10:00 AM</option><option data-itt-time='10:30:00'>10:30 AM</option><option data-itt-time='11:00:00'>11:00 AM</option>
-						<option data-itt-time='11:30:00'>11:30 AM</option><option data-itt-time='12:00:00'>12:00 PM</option><option data-itt-time='12:30:00'>12:30 PM</option>
-						<option data-itt-time='13:00:00'>1:00 PM</option><option data-itt-time='13:30:00'>1:30 PM</option><option data-itt-time='14:00:00'>2:00 PM</option>
-                    </select>
-                </div>
-				<div class='menu'>
-                	<div class='ballmach'></div>
-            		<div class='level' data-itt-llevel='' data-itt-ulevel=''></div>
-            		<div class='players' title='# of players scheduled'>0</div>
-            		<div class='lock'></div>
-        		</div>
-                <ul class='members_list connectedSortable'>
-				</ul>
-			</li>";
-		return $data;
-	}
-	
-	function create_court(&$row, &$resultCourts, &$current_court) {
 
-		global $time_array;		
-		$cnum = $row["cNum"];
-		$numPlayers = $row["numPlayers"];
-		$cTime = $row["cTime"];
-		$skill = $row["skill"];
-		$locked = "unlocked";
-		$clock = "";
-		$levels = "";
-		
-		$l = "";
-		$u = "";
-		
-		if ($row["locked"]) {
-			$locked = "locked";
-			$clock = "disabled";
-		}
-		
-		$withBall = "";
-		
-		if ($row["ballmach"]) {
-			$withBall = "withBall";
-		}
-		$data = "
-			<li class='court $locked' data-itt-cid='$cnum'>
-                <div class='title'>
-                    <span>Court #$cnum</span>
-                    <select class='time' $clock>";
-		
-	
-		foreach ($time_array as $key => $value) {
-			if($cTime == $key) {
-				$data .= "<option data-itt-time='$key' selected='selected'>$value</option>";
-			}
-			else {
-				$data .= "<option data-itt-time='$key'>$value</option>";
-			}
-		}
-					
-		$data .= "
-				</select>
-			</div>";		
-        
-		$temp = "
-                <ul class='members_list connectedSortable'>";
-				$skill = $row["skill"];
-				$id = $row["id"];
-				if (empty($skill) && $id) {
-					$temp .= create_guest($row);
-				}
-				else if($id) {
-					if (lte($skill, $l) || $l == "")
-						$l = $skill;
-									
-					if (lte($u, $skill))
-						$u = $skill;
-						
-					$temp .= create_member($row, $resultCourts, true);
-				}
-				for ($i = 1; $i < $numPlayers; $i++) {
-					$row = $resultCourts->fetch_assoc();
-					$skill = $row["skill"];
-					$id = $row["id"];
-					if (empty($skill) && $id) {
-						$temp .= create_guest($row);
-					}
-					else if($id) {
-						if (lte($skill, $l) || $l == "")
-							$l = $skill;
-									
-						if (lte($u, $skill))
-							$u = $skill;
-							
-						$temp .= create_member($row, $resultCourts, true);
-					}
-				}
-				
-		if ($l != "" && $u!="") {
-			$levels = "$l : $u";
-		}
-		
-		if ($numPlayers == NULL)
-			$numPlayers = 0;
-			
-		$data .= "
-
-		
-				<div class='menu'>
-                	<div class='ballmach $withBall'></div>
-            		<div class='level' data-itt-llevel='$l' data-itt-ulevel='$u'>$levels</div>
-            		<div class='players' title='# of players scheduled'>$numPlayers</div>
-            		<div class='lock'></div>
-        		</div>";
-				
-		$data .= $temp."
-				</ul>
-			</li>";
-
-		return $data;
-	}
-	function create_member($row, &$result, $withReq) {
-		global $time_array;	
-		$id = $row["id"];
-		$skill = $row["skill"];
-		$lname = ucfirst($row["lname"]);
-		$fname = ucfirst($row["fname"]);
-		$phone1 = $row["phone1"];
-		$phone2 = $row["phone2"];
-		
-		$filename = "../members/$id/profile_sm.jpg";
-
-		if (file_exists($filename)) {
-			$filename = "members/$id/profile_sm.jpg";
-		}
-		else {
-			$filename = "images/member_sm.png";
-		}
-		
-		$data = "
-			<li class='member_info' data-itt-id='$id' data-itt-skill='$skill' title='$fname $lname&#013;Ph: $phone1&#013;Ph: $phone2' data-itt-phone='$phone1'>
-				<img class='profile_pic' src='$filename' alt width='24' height='30'>
-				<div class='name'>$fname $lname</div>";
-		
-		if ($withReq) {
-			$friends = $row["friends"];
-			$rTime = $row["rTime"];
-			$requestStr = "Requests to play with:";
-			
-			if ($row["ballrequest"]) {		
-				$data .= "<div class='ballmach'></div>";
-			}
-			if ($friends) {
-				$friend_fname = ucfirst($row["friend_fname"]);
-				$friend_lname = ucfirst($row["friend_lname"]);
-				$requestStr .= "&#013$friend_fname $friend_lname";
-				for ($i = 1; $i < $friends; $i++) {
-					$row = $result->fetch_assoc();
-					$friend_fname = ucfirst($row["friend_fname"]);
-					$friend_lname = ucfirst($row["friend_lname"]);
-					$requestStr .= "&#013$friend_fname $friend_lname";	
-				}
-				$data .= "		
-					<div class='raquet' title='$requestStr'></div>
-					<div class='blue_box' title='$requestStr'>$friends</div>";
-			}
-			
-			if ($rTime) {
-				$data .= "<div class='watch' title='$time_array[$rTime]'></div>";
-			}
-		}
-		
-		$data .= "
-			</li>";
-		return $data;
-	}
-	function create_guest($row) {
-		$id = $row["id"];
-		$fname = ucfirst($row["fname"]);
-		$lname = ucfirst($row["lname"]);
-		$phone1 = $row["phone1"];
-		$phone2 = $row["phone2"];
-		$data = "
-			<li class='guest_info' data-itt-id='$id' data-itt-skill='' title='$fname $lname&#013;Ph: $phone1' data-itt-phone='$phone1'>
-            	<img class='profile_pic' src='images/guest_sm.png' alt width='24' height='30'>
-                <div class='name'>$fname $lname</div>
-                <div class='guest_logo'>GUEST</div>
-            </li>";
-		return $data;
-	}
-	
-	function lte($level1, $level2) {
-		if ($level1 == $level2)
-			return true;
-			
-		$s1 = substr($level1,0,3);
-		$s2 = substr($level2,0,3);
-		
-		if ($s1 != $s2)
-			return ($s1 < $s2);
-			
-		$s1 = substr($level1,3,1);
-		$s2 = substr($level2,3,1);
-		
-		return ($s1 == "-" || $s2 == "+");
-	}
 	
 ?>

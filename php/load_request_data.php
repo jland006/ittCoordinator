@@ -35,8 +35,8 @@
 	
 	$resultProfile = $conn->query($queryProfile);
 	$row = $resultProfile->fetch_assoc();
-	$player_fname = $row["fname"];
-	$player_lname = $row["lname"];
+	$player_fname = ucfirst($row["fname"]);
+	$player_lname = ucfirst($row["lname"]);
 	
 	$profile_layout .= create_profile($row);
 
@@ -198,8 +198,8 @@
 	
 	function create_profile($row) {
 		$id = $row["id"];
-		$fname = $row["fname"];
-		$lname = $row["lname"];
+		$fname = ucfirst($row["fname"]);
+		$lname = ucfirst($row["lname"]);
 		$phone1 = $row["phone1"];
 		$phone2 = $row["phone2"];
 		$email = $row["email"];
@@ -380,8 +380,8 @@
 	}
 	function create_member($row) {
 		$id = $row["id"];
-		$lname = $row["lname"];
-		$fname = $row["fname"];
+		$lname = ucfirst($row["lname"]);
+		$fname = ucfirst($row["fname"]);
 	
 		$filename = "../members/$id/profile_sm.jpg";
 
@@ -401,8 +401,8 @@
 	}
 	function create_guest($row) {
 		$id = $row["id"];
-		$fname = $row["fname"];
-		$lname = $row["lname"];
+		$fname = ucfirst($row["fname"]);
+		$lname = ucfirst($row["lname"]);
 
 		$data = "
 			<li class='guest_info' data-itt-id='$id'>
