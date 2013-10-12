@@ -1,0 +1,260 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="ie6 oldie"> <![endif]-->
+<!--[if IE 7]>    <html class="ie7 oldie"> <![endif]-->
+<!--[if IE 8]>    <html class="ie8 oldie"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="">
+<!--<![endif]-->
+<head>
+
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<title>Tennis Coordinator</title>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script type="text/javascript" src="js/jquery.flip.min.js"></script>
+<script type="text/javascript" src="js/jquery.slimscroll.min.js"></script>
+<script type="text/javascript" src="js/jquery.reveal.js"></script>
+<script type="text/javascript" src="mega/js/mobile.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.css" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="mega/css/megamenu.css" type="text/css" media="screen" /><!-- Menu -->
+<link href="css/member_info.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<div class="megamenu_wrapper_full megamenu_light_theme"><!-- BEGIN MENU WRAPPER -->
+
+
+
+    <div class="megamenu_container megamenu_black"><!-- BEGIN MENU CONTAINER -->
+
+
+
+        <ul class="megamenu"><!-- BEGIN MENU -->
+           
+
+
+            <li class="menuitem_nodrop"><a href="" class="change_date date_left" style="padding: 9px 15px 5px 15px;"><img src="images/larrow.png"></a></li><!-- No Drop Down Item -->
+
+        
+            <li><a href="#" class="menuitem_drop"><input type="text" id="date_text" /></a><!-- Begin Home Item -->
+            
+            
+                <div class="dropdown_2columns"><!-- Begin columns container -->
+
+
+                    <div class="col_full firstcolumn">            
+                    
+                        <div id="datepicker"></div>
+
+                    </div>
+                    
+                
+                </div><!-- End columns container -->
+                
+            
+            </li><!-- End Home Item -->
+            
+			<li class="menuitem_nodrop"><a href="" class="change_date date_right" style="padding: 9px 15px 5px 15px;"><img src="images/rarrow.png"></a></li><!-- No Drop Down Item -->
+            
+            <li style="margin: 20px;"></li><!-- No Drop Down Item -->
+            
+			<li><a href="" class="menuitem_drop">Add Courts</a><!-- Begin Add Courts Item -->
+            
+            
+                <div class="dropdown_3columns"><!-- Begin columns container -->
+                
+                    
+                    <div class="col_full firstcolumn">
+
+                        <h2>Choose below to add a court</h2>
+
+                    	<div class="col_one_third firstcolumn">
+            
+                            <ul class="greybox addCourt">
+                                <li>Court #1</li>
+                                <li>Court #4</li>
+                                <li>Court #7</li>
+                                <li>Court #10</li>
+                                <li>Court #13</li>
+                            </ul>   
+            
+                    	</div>
+                    
+                        <div class="col_one_third">
+                
+                            <ul class="greybox addCourt">
+                                <li>Court #2</li>
+                                <li>Court #5</li>
+                                <li>Court #8</li>
+                                <li>Court #11</li>
+                            </ul>   
+                
+                        </div>
+                    
+                        <div class="col_one_third">
+                
+                            <ul class="greybox addCourt">
+                                <li>Court #3</li>
+                                <li>Court #6</li>
+                                <li>Court #9</li>
+                                <li>Court #12</li>
+                            </ul>   
+                
+                        </div>
+
+                        
+                    </div>
+                
+                
+                </div><!-- End columns container -->
+                
+                
+            </li><!-- End Elements Item -->
+            
+            
+            
+            
+            <li><a href="" class="menuitem_drop">Members</a><!-- Begin 1 column Item -->
+            
+            
+                <div class="dropdown_1column"><!-- Begin 1 column container -->
+                
+                
+                    <div class="col_full firstcolumn">
+                    
+                        <ul class="greybox members">
+                            <li>New Member</li>
+                            <li>Reavtivate Member</li>
+                        </ul>               
+                                   
+                    </div>
+
+                
+                </div><!-- End 1 column container -->
+                
+            
+            </li><!-- End 1 column Item -->
+
+			<li><a href="" class="menuitem_drop">Guests</a><!-- Begin 1 column Item -->
+            
+            
+                <div class="dropdown_1column"><!-- Begin 1 column container -->
+                
+                
+                    <div class="col_full firstcolumn">
+                    
+                        <ul class="greybox guests">
+                            <li>New Guest</li>
+                        </ul>               
+                                   
+                    </div>
+
+                
+                </div><!-- End 1 column container -->
+                
+            
+            </li><!-- End 1 column Item -->
+        
+             <li><a href="" class="menuitem_drop">Print</a><!-- Begin 1 column Item -->
+            
+            
+                <div class="dropdown_1column"><!-- Begin 1 column container -->
+                
+                
+                    <div class="col_full firstcolumn">
+                    
+                        <ul class="greybox printCourts">
+                            <li>Court Layout</li>
+                            <li>List of Scheduled Members</li>
+                        </ul>               
+                                   
+                    </div>
+
+                
+                </div><!-- End 1 column container -->
+                
+            
+            </li><!-- End 1 column Item -->       
+
+
+            <li class="menuitem_nodrop menuitem_right"><a href="">Log Out</a></li><!-- No Drop Down Item -->
+
+
+    
+
+        </ul><!-- END MENU -->
+
+
+
+    </div><!-- END MENU CONTAINER -->
+
+
+
+</div><!-- END MENU WRAPPER -->
+
+
+
+
+<div class="pagecontentclear"></div>
+
+
+
+
+
+
+
+
+<div id="content">
+	<div id="list_layout_far_right" class="off_screen">
+        <ul class="all_guests connectedSortable"></ul>
+    </div>
+    <div id="all_guests_bar">G U E S T S</div>
+	<div id="list_layout_right">
+        <ul class="all_members connectedSortable"></ul>
+    </div>
+    <div id="all_members_bar">M E M B E R S</div>
+    <div id="list_layout_left">
+    	<ul class="waiting_list connectedSortable"></ul>
+    </div>
+    <div id="waiting_list_bar">R E Q U E S T S</div>
+    <div id="court_outline">
+        <ul id="court_layout"></ul>
+    </div>
+    
+    
+</div><!--
+<div class="reveal-modal2">
+	
+</div>-->
+
+<div class="reveal-modal member_request">
+    <div id="main">
+    	<div id="list_layout_far_right">
+            <ul class="bl_members allow_members allow_blist"></ul>
+        </div>
+        <div id="black_list_bar">B L A C K L I S T</div>
+    	<div id="list_layout_right">
+        	<ul class="all_members allow_members allow_blist"></ul>
+        </div>
+        <div id="all_members_bar">M E M B E R S</div>
+        <div id="list_layout_left">
+        	<ul class="all_guests allow_guests"></ul>
+        </div>
+        <div id="all_guests_bar">G U E S T S</div>
+    	<div id="profile_layout"></div>
+    	<div id="court_outline">
+        	<ul id="court_layout"></ul>
+        </div>
+    	
+        
+    </div>
+    <a class="close-reveal-modal" style="top: 7px;">&#215;</a>
+</div>
+</body>
+</html>
