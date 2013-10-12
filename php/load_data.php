@@ -16,8 +16,8 @@
 	$court_layout = "";
 	
 	$queryCourts = "
-	SELECT C.cNum, X.numPlayers, CT.cTime, CL.cNum AS locked, CB.cNum AS ballmach, S.id, S.lname, S.fname, S.gender, S.skill, S.phone1, S.phone2, A.id AS arrived, P.called, MRT.rTime, MRB.rDate AS ballrequest, MRFC.friends, MRF.friend as friend, F.fname AS friend_fname, F.lname AS friend_lname FROM (
-	SELECT cNum FROM court_time WHERE cDate = '$date'
+	SELECT C.cNum, X.numPlayers, CT.cTime, CL.cNum AS locked, CB.cNum AS ballmach, S.id, S.lname, S.fname, S.gender, S.skill, S.member, S.phone1, S.phone2, A.id AS arrived, P.called, MRT.rTime, MRB.rDate AS ballrequest, MRFC.friends, MRF.friend as friend, F.fname AS friend_fname, F.lname AS friend_lname 
+	FROM (SELECT cNum FROM court_time WHERE cDate = '$date'
 	UNION
 	SELECT cNum FROM court_ballmach WHERE cDate = '$date'
 	UNION
@@ -25,7 +25,8 @@
 	UNION
 	SELECT cNum FROM guests_schedule WHERE cDate = '$date'
 	UNION
-	SELECT cNum FROM members_schedule WHERE cDate = '$date') C
+	SELECT cNum FROM members_schedule WHERE cDate = '$date'
+	ORDER BY LENGTH(cNum), cNum) C
 	LEFT JOIN (SELECT Y.cNum, COUNT(*) AS numPlayers 
 	FROM (SELECT cNum FROM members_schedule WHERE cDate = '$date'
 	UNION ALL
@@ -38,10 +39,11 @@
 	ON CL.cNum = C.cNum AND CL.cDate = '$date' 
 	LEFT JOIN court_ballmach CB 
 	ON CB.cNum = C.cNum AND CB.cDate = '$date'
-	LEFT JOIN (SELECT MS.id, MS.cDate, MS.cNum, M.lname, M.fname, M.gender, M.skill, M.phone1, M.phone2 FROM members_schedule MS, members M WHERE MS.id = M.id
+	LEFT JOIN (SELECT MS.id, MS.cNum, M.lname, M.fname, M.gender, M.skill, '1' AS member, M.phone1, M.phone2 FROM members_schedule MS, members M WHERE MS.id = M.id AND MS.cDate = '$date'
 	UNION
-	SELECT GS.id, GS.cDate, GS.cNum, G.lname, G.fname, G.gender, G.skill, G.phone1, G.phone2 FROM guests_schedule GS, guests G WHERE GS.id = G.id) AS S
-	ON S.cNum = C.cNum AND S.cDate = '$date'
+	SELECT GS.id, GS.cNum, G.lname, G.fname, '0' AS gender, '' AS skill, '0' AS member, G.phone1, G.phone2 FROM guests_schedule GS, guests G WHERE GS.id = G.id AND GS.cDate = '$date'
+	ORDER BY lname, fname) AS S
+	ON S.cNum = C.cNum
 	LEFT JOIN (SELECT id FROM members_arrived WHERE cDate = '$date'
 	UNION
 	SELECT id FROM guests_arrived WHERE cDate = '$date') AS A
@@ -50,17 +52,17 @@
 	UNION
 	SELECT * FROM guests_called WHERE cDate = '$date') AS P
 	ON P.id = S.id
-	LEFT JOIN members_request_time MRT
-	ON MRT.id = S.id AND MRT.rDate = '$date'
-	LEFT JOIN members_request_ballmach MRB 
-	ON MRB.id = S.id AND MRB.rDate = '$date' 
+	LEFT JOIN (SELECT * FROM members_request_time WHERE rDate = '$date') MRT
+	ON MRT.id = S.id
+	LEFT JOIN (SELECT * FROM members_request_ballmach WHERE rDate = '$date') MRB 
+	ON MRB.id = S.id
 	LEFT JOIN (SELECT id, COUNT(*) AS friends FROM members_request_friend WHERE rDate = '$date' GROUP BY id) MRFC 
 	ON MRFC.id = S.id 
-	LEFT JOIN members_request_friend MRF 
-	ON MRF.id = S.id AND MRF.rDate = '$date'
+	LEFT JOIN (SELECT * FROM members_request_friend WHERE rDate = '$date') MRF 
+	ON MRF.id = S.id
 	LEFT JOIN (SELECT id, fname, lname FROM members UNION SELECT id, fname, lname FROM guests) F
-	ON F.id = MRF.friend  
-	ORDER BY LENGTH(C.cNum), cNum, S.lname, S.fname, F.lname, F.fname";
+	ON F.id = MRF.friend 
+	ORDER BY LENGTH(C.cNum), C.cNum, S.lname, S.fname, F.lname, F.fname";
 	
 	$resultCourts = $conn->query($queryCourts);
 	$row_cnt = $resultCourts->num_rows;
@@ -94,9 +96,9 @@
 	
 	$queryWaiting = "
 	SELECT R.id, R.lname, R.fname, R.gender, R.skill, R.phone1, R.phone2, A.id AS arrived, P.called, MRT.rTime, MRB.rDate AS ballrequest, MRFC.friends, MRF.friend as friend, F.fname AS friend_fname, F.lname AS friend_lname FROM(
-	SELECT MR.id, MR.rDate, M.lname, M.fname, M.gender, M.skill, M.phone1, M.phone2 FROM members_request MR, members M WHERE MR.id = M.id AND MR.rDate = '$date'
+	SELECT MR.id, MR.rDate, M.lname, M.fname, M.gender, M.skill, '1' AS member, M.phone1, M.phone2 FROM members_request MR, members M WHERE MR.id = M.id AND MR.rDate = '$date'
 	UNION
-	SELECT GR.id, GR.rDate, G.lname, G.fname, G.gender, G.skill, G.phone1, G.phone2 FROM guests_request GR, guests G WHERE GR.id = G.id AND GR.rDate = '$date') R
+	SELECT GR.id, GR.rDate, G.lname, G.fname, '0' AS gender, '' AS skill, '0' AS member, G.phone1, G.phone2 FROM guests_request GR, guests G WHERE GR.id = G.id AND GR.rDate = '$date') R
 	LEFT JOIN (SELECT id FROM members_arrived WHERE cDate = '$date'
 	UNION
 	SELECT id FROM guests_arrived WHERE cDate = '$date') AS A
@@ -105,10 +107,10 @@
 	UNION
 	SELECT * FROM guests_called WHERE cDate = '$date') AS P
 	ON P.id = R.id
-	LEFT JOIN members_request_time MRT 
-	ON MRT.id = R.id  AND MRT.rDate = '$date' 
-	LEFT JOIN members_request_ballmach MRB 
-	ON MRB.id = R.id AND MRB.rDate = '$date' 
+	LEFT JOIN (SELECT * FROM members_request_time WHERE rDate = '$date') MRT 
+	ON MRT.id = R.id
+	LEFT JOIN (SELECT * FROM members_request_ballmach WHERE rDate = '$date') MRB 
+	ON MRB.id = R.id
 	LEFT JOIN (SELECT id, COUNT(*) AS friends FROM members_request_friend WHERE rDate = '$date' GROUP BY id) MRFC 
 	ON MRFC.id = R.id 
 	LEFT JOIN (SELECT * FROM members_request_friend WHERE rDate = '$date') MRF 

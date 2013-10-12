@@ -8,13 +8,13 @@
 	$queryGetCourts = "SELECT C.cNum FROM (
 	SELECT cNum FROM court_time WHERE cNum REGEXP '^$cnum\[A\-Z\]$' AND cDate = '$date'
 	UNION
-	SELECT cNum FROM court_ballmach WHERE cNum REGEXP '^7\[A\-Z\]$' AND cDate = '$date'
+	SELECT cNum FROM court_ballmach WHERE cNum REGEXP '^$cnum\[A\-Z\]$' AND cDate = '$date'
 	UNION
-	SELECT cNum FROM court_locked WHERE cNum REGEXP '^7\[A\-Z\]$' AND cDate = '$date'
+	SELECT cNum FROM court_locked WHERE cNum REGEXP '^$cnum\[A\-Z\]$' AND cDate = '$date'
 	UNION
-	SELECT cNum FROM guests_schedule WHERE cNum REGEXP '^7\[A\-Z\]$' AND cDate = '$date'
+	SELECT cNum FROM guests_schedule WHERE cNum REGEXP '^$cnum\[A\-Z\]$' AND cDate = '$date'
 	UNION
-	SELECT cNum FROM members_schedule WHERE cNum REGEXP '^7\[A\-Z\]$' AND cDate = '$date') C 
+	SELECT cNum FROM members_schedule WHERE cNum REGEXP '^$cnum\[A\-Z\]$' AND cDate = '$date') C 
 	ORDER BY LENGTH(C.cNum), C.cNum";
 	
 	$resultGetCourts = $conn->query($queryGetCourts);

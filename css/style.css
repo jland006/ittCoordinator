@@ -85,12 +85,49 @@ body {
 	word-spacing: 8px;
 }
 .court .title .time {
-	width: 67px;
-	-webkit-appearance: none;
-	font-weight: bold;
-	color: #FFFFFF;
-	background-color: #336600;
 	float: right;
+}
+.court .title .time .time_view {
+	border: 1px solid #FFFFFF;
+	color: #FFFFFF;
+	font-weight: bold;
+	font-size: 13px;
+	line-height: 14px;
+	cursor: default;
+	width: 58px;
+	height:14px;
+	padding: 2px 4px 2px 4px;
+}
+.court .title .time ul {
+	width: 68px;
+	display: none;
+	cursor: default;
+	position: absolute;
+	z-index: 1001;
+	background-color: #336600;
+}
+.court .title .time ul p {
+	padding: 2px 3px 2px 3px;
+	height: 14px;
+	font-size: 14px;
+	font-weight: normal;
+	color: #FFF;
+	line-height: 14px;
+}
+.court .title .time ul li {
+	position: relative;
+	
+}
+.court .title .time li ul {
+	position: absolute;
+	left: 68px;
+	top: 0;
+}
+.court .title .time li:hover ul {
+	display: block;
+}
+.court .title .time li:hover {
+	background-color: #3399ff;
 }
 .court .menu {
 	height: 27px;

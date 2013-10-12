@@ -1,0 +1,1 @@
+[29-Sep-2013 10:39:44] PHP Warning:  mysqli::mysqli() [<a href='mysqli.mysqli'>mysqli.mysqli</a>]: (08004/1040): Too many connections in /home3/nettimi/public_html/scc/coordinator/php/connection.php on line 5

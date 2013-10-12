@@ -1,30 +1,13 @@
 <?php
 
 	include 'connection.php';
+	include 'time_array.php';
 
 	$date = date("Y-m-d");
 	$player_id = $_POST["id"];
 	
 	$friend_added = false;
 
-	$time_array = array(
-		"00:00:00" => "&#8226;&nbsp; TIME &nbsp;&#8226;",
-		"07:00:00" => "7:00 AM",
-		"07:30:00" => "7:30 AM",
-		"08:00:00" => "8:00 AM",
-		"08:30:00" => "8:30 AM",
-		"09:00:00" => "9:00 AM",
-		"09:30:00" => "9:30 AM",
-		"10:00:00" => "10:00 AM",
-		"10:30:00" => "10:30 AM",
-		"11:00:00" => "11:00 AM",
-		"11:30:00" => "11:30 AM",
-		"12:00:00" => "12:00 PM",
-		"12:30:00" => "12:30 PM",
-		"13:00:00" => "1:00 PM",
-		"13:30:00" => "1:30 PM",
-		"14:00:00" => "2:00 PM"
-	);
 	
 	//////////////////////////////////////////////////////////////////////////////////////
 	$profile_layout = "";
@@ -278,14 +261,36 @@
                 <div class='ball_request'>Request</div>
 				<div class='menu' style='display: none;'>
                 	<div class='ballmach'></div>
-					<select class='time'> 
-						<option data-itt-time='00:00:00' selected='selected'>&#8226;&nbsp; TIME &nbsp;&#8226;</option>
-						<option data-itt-time='07:00:00'>7:00 AM</option><option data-itt-time='07:30:00'>7:30 AM</option><option data-itt-time='08:00:00'>8:00 AM</option>
-						<option data-itt-time='08:30:00'>8:30 AM</option><option data-itt-time='09:00:00'>9:00 AM</option><option data-itt-time='09:30:00'>9:30 AM</option>
-						<option data-itt-time='10:00:00'>10:00 AM</option><option data-itt-time='10:30:00'>10:30 AM</option><option data-itt-time='11:00:00'>11:00 AM</option>
-						<option data-itt-time='11:30:00'>11:30 AM</option><option data-itt-time='12:00:00'>12:00 PM</option><option data-itt-time='12:30:00'>12:30 PM</option>
-						<option data-itt-time='13:00:00'>1:00 PM</option><option data-itt-time='13:30:00'>1:30 PM</option><option data-itt-time='14:00:00'>2:00 PM</option>
-					</select>
+					<div class='time' data-itt-time='00:00:00'>
+						<p class='time_view'>&#8226;&nbsp; TIME &nbsp;&#8226;</p>
+						<ul class='times'>
+						  <li><p data-itt-time='00:00:00'>&#8226;&nbsp; TIME &nbsp;&#8226;</p></li>
+						  <li><p data-itt-time='07:00:00'>7:00 AM</p>
+							<ul><li><p data-itt-time='07:15:00'>7:15 AM</p></li><li><p data-itt-time='07:30:00'>7:30 AM</p></li><li><p data-itt-time='07:45:00'>7:45 AM</p></li></ul>
+						  </li>
+						  <li><p data-itt-time='08:00:00'>8:00 AM</p>
+							<ul><li><p data-itt-time='08:15:00'>8:15 AM</p></li><li><p data-itt-time='08:30:00'>8:30 AM</p></li><li><p data-itt-time='08:45:00'>8:45 AM</p></li></ul>
+						  </li>
+						  <li><p data-itt-time='09:00:00'>9:00 AM</p>
+							<ul><li><p data-itt-time='09:15:00'>9:15 AM</p></li><li><p data-itt-time='09:30:00'>9:30 AM</p></li><li><p data-itt-time='09:45:00'>9:45 AM</p></li></ul>
+						  </li>
+						  <li><p data-itt-time='10:00:00'>10:00 AM</p>
+							<ul><li><p data-itt-time='10:15:00'>10:15 AM</p></li><li><p data-itt-time='10:30:00'>10:30 AM</p></li><li><p data-itt-time='10:45:00'>10:45 AM</p></li></ul>
+						  </li>
+						  <li><p data-itt-time='11:00:00'>11:00 AM</p>
+							<ul><li><p data-itt-time='11:15:00'>11:15 AM</p></li><li><p data-itt-time='11:30:00'>11:30 AM</p></li><li><p data-itt-time='11:45:00'>11:45 AM</p></li></ul>
+						  </li>
+						  <li><p data-itt-time='12:00:00'>12:00 PM</p>
+							<ul><li><p data-itt-time='12:15:00'>12:15 PM</p></li><li><p data-itt-time='12:30:00'>12:30 PM</p></li><li><p data-itt-time='12:45:00'>12:45 AM</p></li></ul>
+						  </li>
+						  <li data-itt-time='13:00:00'><p>1:00 PM</p>
+							<ul><li><p data-itt-time='13:15:00'>1:15 PM</p></li><li><p data-itt-time='13:30:00'>1:30 PM</p></li><li><p data-itt-time='13:45:00'>1:45 AM</p></li></ul>
+						  </li>
+						  <li><p data-itt-time='14:00:00'>2:00 PM</p>
+							<ul><li><p data-itt-time='14:15:00'>2:15 PM</p></li><li><p data-itt-time='14:30:00'>2:30 PM</p></li><li><p data-itt-time='14:45:00'>2:45 AM</p></li></ul>
+						  </li>
+						</ul>
+					</div>
             		<div class='players' title='# of players scheduled'>1</div>
         		</div>
                 <ul class='members_list allow_members allow_guests'>
@@ -329,19 +334,36 @@
                 <div class='ball_request' style='display: none;'>Request</div>
 				<div class='menu'>
                 	<div class='ballmach $withBall'></div>
-					<select class='time'>";
-					
-		foreach ($time_array as $key => $value) {
-			if($rTime == $key) {
-				$data .= "<option data-itt-time='$key' selected='selected'>$value</option>";
-			}
-			else {
-				$data .= "<option data-itt-time='$key'>$value</option>";
-			}
-		}			
-
-		$data .= "
-					</select>
+					<div class='time' data-itt-time='$rTime'>
+						<p class='time_view'>$time_array[$rTime]</p>
+						<ul class='times'>
+						  <li><p data-itt-time='00:00:00'>&#8226;&nbsp; TIME &nbsp;&#8226;</p></li>
+						  <li><p data-itt-time='07:00:00'>7:00 AM</p>
+							<ul><li><p data-itt-time='07:15:00'>7:15 AM</p></li><li><p data-itt-time='07:30:00'>7:30 AM</p></li><li><p data-itt-time='07:45:00'>7:45 AM</p></li></ul>
+						  </li>
+						  <li><p data-itt-time='08:00:00'>8:00 AM</p>
+							<ul><li><p data-itt-time='08:15:00'>8:15 AM</p></li><li><p data-itt-time='08:30:00'>8:30 AM</p></li><li><p data-itt-time='08:45:00'>8:45 AM</p></li></ul>
+						  </li>
+						  <li><p data-itt-time='09:00:00'>9:00 AM</p>
+							<ul><li><p data-itt-time='09:15:00'>9:15 AM</p></li><li><p data-itt-time='09:30:00'>9:30 AM</p></li><li><p data-itt-time='09:45:00'>9:45 AM</p></li></ul>
+						  </li>
+						  <li><p data-itt-time='10:00:00'>10:00 AM</p>
+							<ul><li><p data-itt-time='10:15:00'>10:15 AM</p></li><li><p data-itt-time='10:30:00'>10:30 AM</p></li><li><p data-itt-time='10:45:00'>10:45 AM</p></li></ul>
+						  </li>
+						  <li><p data-itt-time='11:00:00'>11:00 AM</p>
+							<ul><li><p data-itt-time='11:15:00'>11:15 AM</p></li><li><p data-itt-time='11:30:00'>11:30 AM</p></li><li><p data-itt-time='11:45:00'>11:45 AM</p></li></ul>
+						  </li>
+						  <li><p data-itt-time='12:00:00'>12:00 PM</p>
+							<ul><li><p data-itt-time='12:15:00'>12:15 PM</p></li><li><p data-itt-time='12:30:00'>12:30 PM</p></li><li><p data-itt-time='12:45:00'>12:45 AM</p></li></ul>
+						  </li>
+						  <li data-itt-time='13:00:00'><p>1:00 PM</p>
+							<ul><li><p data-itt-time='13:15:00'>1:15 PM</p></li><li><p data-itt-time='13:30:00'>1:30 PM</p></li><li><p data-itt-time='13:45:00'>1:45 AM</p></li></ul>
+						  </li>
+						  <li><p data-itt-time='14:00:00'>2:00 PM</p>
+							<ul><li><p data-itt-time='14:15:00'>2:15 PM</p></li><li><p data-itt-time='14:30:00'>2:30 PM</p></li><li><p data-itt-time='14:45:00'>2:45 AM</p></li></ul>
+						  </li>
+						</ul>
+					</div>
             		<div class='players' title='# of players scheduled'>1</div>
         		</div>
                 <ul class='members_list allow_members allow_guests'>

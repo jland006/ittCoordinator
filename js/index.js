@@ -153,7 +153,6 @@ $(function() {
 						$menu = $title.siblings(".menu");
 						$menu.children(".players").html("1");
 						$menu.children(".ballmach").removeClass("withBall");
-						$menu.children(".time")[0].selectedIndex = 0;
 						var id = $("#main #profile_layout #player_id").val();
 						var rdate = $(this).closest(".court_request").attr("data-itt-sdate");
 						$.post("php/request_match_members.php", {id:id, date:rdate, request:0});
@@ -172,11 +171,23 @@ $(function() {
 						$.post("php/request_ballmach_members.php", {date: rdate, id: id, ball: 1});
 					}
 				});
-				$('.court_request .time').on("change", function() {
-					var id = $("#main #profile_layout #player_id").val();
-					var rdate = $(this).closest(".court_request").attr("data-itt-sdate");
-					var time = $("option:selected", this).attr("data-itt-time");
-					$.post('php/request_time_members.php', {date: rdate, id:id, time: time});
+				$(".court_request .time").on({
+					click: function() {$(this).children(".times").show();},
+					mouseleave: function() {$(this).children(".times").hide();}
+				});
+				$(".court_request .times li").on("click", function(e) {
+					var $target = $(e.target);
+					var $time = $(this).closest(".time");
+					var court_time = $time.attr("data-itt-time");
+					var new_time = $target.attr("data-itt-time");
+
+					if (new_time != court_time) {
+						$time.children("p").html($(this).children("p").text());
+						$time.attr("data-itt-time", new_time)
+						var id = $("#main #profile_layout #player_id").val();
+						var rdate = $(this).closest(".court_request").attr("data-itt-sdate");
+						$.post('php/request_time_members.php', {date: rdate, id:id, time: new_time});
+					}
 				});
 				
 				$("#main .all_members").sortable({
@@ -288,8 +299,6 @@ $(function() {
 				$("#content .waiting_list").html(output["waiting_list"]);
 				$("#content .all_members").html(output["all_members"]);
 				$("#content .all_guests").html(output["all_guests"]);
-				
-				$("#content #court_layout").append("You can now transfer courts again. You can place a check in each members green checkbox as soon as the member shows up for their match. Click the phone icon once to signify that you have called the member. Click the phone icon again to signify the the member has accepted the match. I will remove this message in a couple days. Please call or text me for any new issues: 760-397-7225. Thank you");
 			},
 			complete: function(){
 				$('#content #court_layout, #content .waiting_list, #content .all_members, #content .all_guests').slimscroll({
@@ -308,15 +317,30 @@ $(function() {
 						$('#court_layout').sortable("enable");
 						return false;
 					}
-				});	
+				});
 				$('.members_list').slimscroll({
 					height: '128px',
 					size: '8px'
 				});
-				$('.time').on("change", function() {
-					var cnum = $(this).closest(".court").attr("data-itt-cid");
-					var time = $("option:selected", this).attr("data-itt-time");
-					$.post('php/court_time.php', {date: currentDate, cnum:cnum, time: time});
+				$(".time").on({
+					click: function() {
+						if($(this).closest(".court").hasClass("unlocked"))
+							$(this).children(".times").show();
+					},
+					mouseleave: function() {$(this).children(".times").hide();}
+				});
+				$(".times li").on("click", function(e) {
+					var $target = $(e.target);
+					var $time = $(this).closest(".time");
+					var court_time = $time.attr("data-itt-time");
+					var new_time = $target.attr("data-itt-time");
+
+					if (new_time != court_time) {
+						$time.children("p").html($(this).children("p").text());
+						$time.attr("data-itt-time", new_time)
+						var cnum = $(this).closest(".court").attr("data-itt-cid");
+						$.post('php/court_time.php', {date: currentDate, cnum:cnum, time: new_time});
+					}
 				});
 				$(".member_info .phone_status, .guest_info .phone_status").on("click", function() {
 					$player_info = $(this).closest('li');
@@ -370,7 +394,6 @@ $(function() {
 					var $court = $(this).closest(".court");
 					var cnum = $court.attr("data-itt-cid");
 					var $list = $court.find(".members_list");
-					var $time = $court.find(".time");
 			
 					if ($court.hasClass('locked')) {
 						$court.attr("class","court unlocked");
@@ -380,7 +403,6 @@ $(function() {
 							speed: 250
 						});
 						$list.sortable("enable");
-						$time.prop('disabled', false);
 						$.post("php/lock_court.php", {date: currentDate, cnum: cnum, lock: 0});
 						return false;
 					}
@@ -392,7 +414,6 @@ $(function() {
 							speed: 250
 						});
 						$list.sortable("disable");
-						$time.prop('disabled', true);
 						$.post("php/lock_court.php", {date: currentDate, cnum: cnum, lock: 1});
 						return false;
 					}
@@ -512,7 +533,7 @@ $(function() {
 		var $list_from = $court_from.find(".members_list");
 		var mem_from_sz = $list_from.children('.member_info').size();
 		var guest_from_sz = $list_from.children('.guest_info').size();
-		var time_from = $("option:selected", $court_from.find('.time')).attr("data-itt-time");
+		var time_from = $court_from.find('.time').attr("data-itt-time");
 		var locked_from = $court_from.hasClass("locked");
 		var ballmach_from = $court_from.find(".menu .ballmach").hasClass("withBall");
 		
@@ -520,7 +541,7 @@ $(function() {
 		var $list_to = $court_to.find(".members_list");
 		var mem_to_sz = $list_to.children('.member_info').size();
 		var guest_to_sz = $list_to.children('.guest_info').size();
-		var time_to = $("option:selected", $court_to.find('.time')).attr("data-itt-time");
+		var time_to = $court_to.find('.time').attr("data-itt-time");
 		var locked_to = $court_to.hasClass("locked");
 		var ballmach_to = $court_to.find(".menu .ballmach").hasClass("withBall");
 		
@@ -767,7 +788,7 @@ $(function() {
 		$('#content .court').each(function() {
 			html += "<div id='court'> \
 						<div id='title'>" + $(this).find('.title').children('span').text() + "</div> \
-						<div id='time'>" + $(this).find('.time').val() + "</div>";
+						<div id='time'>" + $(this).find('.time_view').text() + "</div>";
 				$(this).find('.members_list li').each(function() {
 					html += "<div>" + $(this).children('.name').text() + "</div>";
 				});
@@ -815,7 +836,7 @@ $(function() {
 		var count = 1;				
 		$('.court').each(function() {
 			var cid = $(this).attr("data-itt-cid");
-			var time = $(this).find('.time').val();
+			var time = $(this).find('.time_view').text();
 			$(this).find('.members_list li').each(function() {
 
 				//var type = $(this).attr("class");
